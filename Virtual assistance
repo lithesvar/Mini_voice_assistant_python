@@ -1,0 +1,220 @@
+import speech_recognition as sr
+import pyttsx3
+import pywhatkit
+import datetime
+import wikipedia
+import pyjokes
+import smtplib
+
+
+r = sr.Recognizer()
+engine = pyttsx3.init()
+
+
+def talk(audio):
+    engine.say(audio)
+    engine.runAndWait()
+
+
+def time():
+    time = datetime.datetime.now().strftime("%I:%M:%S")
+    talk(time)
+
+
+def date():
+    date = int(datetime.datetime.now().day)
+    month = int(datetime.datetime.now().month)
+    year = int(datetime.datetime.now().year)
+    talk(date)
+    talk(month)
+    talk(year)
+
+
+# jarvis wish me
+
+def wishme():
+    hour = int(datetime.datetime.now().hour)
+    talk('starting all system and application')
+    talk('installing all drivers calibrating and checking all core process')
+    talk('all system have been started')
+    talk('i am back now on my own')
+    talk('hello i am jarvis,lethesh virtual assistance')
+    if hour <= 6 or hour < 12:
+        talk('good morning sir')
+        talk('today date is')
+        date()
+        talk('and the current time is')
+        time()
+    elif hour >= 12 or hour < 18:
+        talk('good afternoon sir')
+        talk('today date is')
+        date()
+        talk('and the current time is')
+        time()
+    elif hour >= 18 or hour < 24:
+        talk('good evening sir')
+        talk('today date is')
+        date()
+        talk('and the current time is')
+        time()
+
+    talk('how can i help you sir')
+
+
+wishme()
+
+
+# jarvis recognize
+
+
+def take_command():
+    try:
+        with sr.Microphone() as source:
+            print('listening...')
+            r.pause_threshold = 1
+            r.adjust_for_ambient_noise(source, duration=1)
+            # listens for the user's input
+            audio = r.listen(source)
+            command = r.recognize_google(audio).lower()
+            if 'jarvis' in command:
+                command = command.replace('jarvis', '')
+                print(command)
+
+    except sr.UnknownValueError:
+        print('Your last command couldn\'t be heard')
+        command = take_command()
+
+    return command
+
+
+def joke():
+    command = take_command()
+    print(command)
+    if 'joke' in command:
+        talk(pyjokes.get_joke())
+        print(joke)
+    return joke
+
+def run_jarvis():
+    command = take_command()
+    print(command)
+
+    # Gendral instruction
+
+    if 'hello' in command:
+        talk('hello sir how can i help you')
+        print('hello sir how can i help you')
+    elif 'hi' in command:
+        talk('hi sir,how can i help you')
+    elif 'jarvis' in command:
+        talk('yes sir i am here what can i do for you')
+        print('yes sir i am here what can i do for you')
+    elif 'thanks' in command:
+        talk('welcome sir,is anything else to help you out')
+        print('welcome sir,is anything else to help you out')
+    elif 'bye' in command:
+        talk('bye sir thanks for calling me')
+        talk('jarvis signing off')
+        print('signing off 3 2 1..')
+    elif 'okay' in command:
+        talk('ok sir is anything alse to help you out')
+    elif 'nothing' in command:
+        talk('ok sir')
+    elif 'shut up' in command:
+        talk('oops,pardon me sir')
+    elif 'i love you' in command:
+        talk('happy to hear that from you sir')
+        talk('sir this is right time to please increase my salary haha')
+    elif 'useless ' in command:
+        talk('pardon me sir you created me then you too')
+    elif 'who created you' in command:
+        print('lithesh created me')
+        talk('lithesh created me')
+    elif 'are you single' in command:
+        talk('oops,i am virtual assistance to lethesh ')
+
+
+    # youtube songs
+
+    elif 'play' in command:
+        song = command.replace('play', '')
+        talk('opening you tube')
+        talk('playing ' + song)
+        pywhatkit.playonyt(song)
+
+    # wikipedia content
+
+    elif 'who is' in command:
+        person = command.replace('who is', '')
+        info = wikipedia.summary(person, 1)
+        print('searching in wikipedia')
+        talk('according to wikipedia')
+        print(info)
+        talk(info)
+    elif 'what is' in command:
+        statement = command.replace('what or define', '')
+        info1 = wikipedia.summary(statement, 3)
+        talk('according to web search')
+        print(info1)
+        talk(info1)
+    elif 'search' in command:
+        statement1 = command.replace('search', '')
+        info2 = wikipedia.summary(statement1, 3)
+        talk('according to web search')
+        print(info2)
+        talk(info2)
+    elif 'define' in command:
+        statement2 = command.replace('what or define', '')
+        info3 = wikipedia.summary(statement2, 3)
+        talk('according to web search')
+        print(info3)
+        talk(info3)
+
+    # sending E mail
+
+    elif ' email' in command:
+
+        # subeject of the mail
+        talk('What is the subject?')
+        subject = take_command()
+        print(subject)
+
+        # message of the mail
+        talk('What should I say?')
+        message = take_command()
+        print(message)
+
+        content = 'Subject: {}\n\n{}'.format(subject, message)
+
+        # init gmail SMTP
+        mail = smtplib.SMTP('smtp.gmail.com', 587)
+
+        # identify to server
+        mail.ehlo()
+
+        # encrypt session
+        mail.starttls()
+
+        # login
+        mail.login('YOUR EMAIL ID', 'PASSWORD')
+
+        # send message
+        mail.sendmail('FROM', 'TO', content)
+
+        # end mail connection
+        mail.close()
+
+        talk('Email sent.')
+        print("Email sent")
+
+
+
+    else:
+        talk('please say command again')
+
+
+while True:
+    run_jarvis()
+
+
+
